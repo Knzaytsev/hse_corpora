@@ -1,0 +1,4 @@
+__pycache__
+code/data/*
+docker/pgadmin/*
+docker/pgdata/*

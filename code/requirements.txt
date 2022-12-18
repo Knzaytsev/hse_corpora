@@ -1,0 +1,17 @@
+asgiref==3.5.2
+click==8.1.3
+fastapi==0.68.2
+greenlet==2.0.1
+h11==0.14.0
+numpy==1.23.5
+pandas==1.5.2
+psycopg2==2.9.5
+psycopg2-binary==2.9.5
+pydantic==1.10.2
+python-dateutil==2.8.2
+pytz==2022.6
+six==1.16.0
+SQLAlchemy==1.4.45
+starlette==0.14.2
+typing_extensions==4.4.0
+uvicorn==0.15.0
