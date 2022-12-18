@@ -46,35 +46,3 @@ async def work(background_tasks: BackgroundTasks):
 @app.get("/fulfill_tables/status")
 async def status_handler():
     return jobs
-
-# async def async_fulfill_tables(job_key):
-#     jobs = context['jobs']
-#     error = await fulfill_tables()
-#     status = dict()
-#     status['status'] = "ok"
-#     if error:
-#         status['status'] = "not ok"
-#         status['message'] = error
-#     jobs[job_key] = status
-
-# @app.get("/fulfill_tables")
-# async def init_tables():
-#     identifier = str(uuid.uuid4())
-#     context['jobs'][identifier] = {}
-#     asyncio.run_coroutine_threadsafe(async_fulfill_tables(identifier), loop=asyncio.get_running_loop())
-
-#     return {"identifier": identifier}
-
-#     error = fulfill_tables()
-#     status = dict()
-#     status['status'] = "ok"
-#     if error:
-#         status['status'] = "not ok"
-#         status['message'] = error
-#     return status
-
-# @app.get("/fulfill_tables/status")
-# async def init_tables_status():
-#     return {
-#         'all': list(context['jobs'].values()),
-#     }
