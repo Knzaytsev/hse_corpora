@@ -1,6 +1,6 @@
-from typing import Union
 from app.db.models_creator import create_tables, fulfill_tables
-from app.db.db_utils import check_db_status
+from app.db.utils import check_db_status
+from app.api.backend import select_token
 from app.api.models import Job
 from http import HTTPStatus
 from fastapi import FastAPI, BackgroundTasks
@@ -15,11 +15,16 @@ async def init_db():
     if error:
         raise Exception(error)
 
+@app.get("/{word}")
+async def select_word(word):
+    return select_token(word)
+
 @app.get("/check_db")
 async def check_db():
     status = dict()
     status['message'] = check_db_status()
     return status
+
 
 def process_fulfillment(task_id):
     error = fulfill_tables()

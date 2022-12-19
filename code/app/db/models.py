@@ -4,10 +4,11 @@ from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
+
 class Texts(Base):
     __tablename__ = "texts"
 
-    text_id	= Column(Integer, primary_key=True)
+    text_id = Column(Integer, primary_key=True)
     text_year = Column(Integer)
     text_name = Column(String)
     original_text_name = Column(String)
@@ -15,7 +16,7 @@ class Texts(Base):
     text_date = Column(String)
     student_department = Column(String)
     cefr_level = Column(String)
-    student_moniker	= Column(String)
+    student_moniker = Column(String)
     text_ielts = Column(Boolean)
     student_sex = Column(String)
     student_study_year = Column(Integer)
@@ -28,6 +29,7 @@ class Texts(Base):
     json_time_stamp = Column(Float)
     text_ann_tags = Column(Integer)
     ann_time_stamp = Column(Float)
+
 
 class Sentences(Base):
     __tablename__ = "sentences"
@@ -46,21 +48,22 @@ class Sentences(Base):
     sentence_token_spacy_tags = Column(String)
 
     __table_args__ = (ForeignKeyConstraint([text_id],
-                                        [Texts.text_id]),
-                    {})
+                                           [Texts.text_id]),
+                      {})
+
 
 class TokenizedTexts(Base):
     __tablename__ = "tokenized_texts"
 
     text_id = Column(Integer, primary_key=True)
-    sentence_id = Column(Integer, primary_key=True)	
+    sentence_id = Column(Integer, primary_key=True)
     token_id = Column(Integer, primary_key=True)
     token_inx = Column(Integer)
     token = Column(String)
     pos = Column(String)
     new_pos = Column(String)
     lemma = Column(String)
-    token_start = Column(Integer)	
+    token_start = Column(Integer)
     token_end = Column(Integer)
     token_space = Column(Integer)
     token_start_in_sentence = Column(Integer)
@@ -73,11 +76,12 @@ class TokenizedTexts(Base):
                                            [Sentences.text_id, Sentences.sentence_id]),
                       {})
 
+
 class Mistakes(Base):
     __tablename__ = "mistakes"
 
     mistake_id = Column(Integer, primary_key=True)
-    text_id = Column(Integer, primary_key=True)	
+    text_id = Column(Integer, primary_key=True)
     sentence_id = Column(Integer, primary_key=True)
     ann_id = Column(String)
     mistake_type = Column(String)
@@ -99,15 +103,16 @@ class Mistakes(Base):
     span_start = Column(String)
     span_end = Column(String)
 
-    __table_args__ = (ForeignKeyConstraint([text_id, sentence_id], 
-                                        [Sentences.text_id, Sentences.sentence_id]),
-                    {})
+    __table_args__ = (ForeignKeyConstraint([text_id, sentence_id],
+                                           [Sentences.text_id, Sentences.sentence_id]),
+                      {})
+
 
 class Corrections(Base):
     __tablename__ = "corrections"
 
     mistake_id = Column(Integer, primary_key=True)
-    text_id = Column(Integer, primary_key=True)	
+    text_id = Column(Integer, primary_key=True)
     sentence_id = Column(Integer, primary_key=True)
     correction_token_id = Column(Integer, primary_key=True)
     correction_token = Column(String)
@@ -117,5 +122,5 @@ class Corrections(Base):
     correction_start_inx = Column(Integer)
 
     __table_args__ = (ForeignKeyConstraint([mistake_id, text_id, sentence_id],
-                                        [Mistakes.mistake_id, Mistakes.text_id, Mistakes.sentence_id]),
-                    {})
+                                           [Mistakes.mistake_id, Mistakes.text_id, Mistakes.sentence_id]),
+                      {})
