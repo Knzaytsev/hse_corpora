@@ -12,7 +12,6 @@ def select_token(token):
               and_(Sentences.text_id == TokenizedTexts.text_id,
                    Sentences.sentence_id == TokenizedTexts.sentence_id)) \
         .where(TokenizedTexts.token == token)
-    print(stmt)
     descriptions = stmt.column_descriptions
     result = exec_statement(stmt)
     return [{description["name"]: row[i] for i, description in enumerate(descriptions)} for row in result]

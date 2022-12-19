@@ -1,6 +1,6 @@
 from app.db.models_creator import create_tables, fulfill_tables
 from app.db.utils import check_db_status
-from app.api.backend import select_token
+from app.api.search_engine import select_token
 from app.api.models import Job
 from http import HTTPStatus
 from fastapi import FastAPI, BackgroundTasks
@@ -15,7 +15,7 @@ async def init_db():
     if error:
         raise Exception(error)
 
-@app.get("/{word}")
+@app.get("/search/{word}")
 async def select_word(word):
     return select_token(word)
 
@@ -28,7 +28,7 @@ async def check_db():
 
 def process_fulfillment(task_id):
     error = fulfill_tables()
-    jobs[task_id].status = "completed"
+    jobs[task_id].status = "completed" if not error else "error"
     jobs[task_id].message = error
 
 

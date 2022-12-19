@@ -29,14 +29,14 @@ def check_db_status():
     return message
 
 def load_data(file_name):
-    data = pd.read_csv(file_name, delimiter='\t', encoding='utf-8')
+    data = pd.read_csv(file_name, delimiter='\t', encoding='utf-16')
     data = data.where(data.notna(), None)
-    return data.columns, data
+    return data
 
 def create_table(metadata):
     metadata.create_all(engine)
 
-def import_data(file_names, tables):
+def import_data(file_names, tables, year):
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
@@ -44,7 +44,9 @@ def import_data(file_names, tables):
     error = ""
     try:
         for file_name, table in zip(file_names, tables):
-            headers, data = load_data(file_name)
+            data = load_data(file_name)
+            data['text_year'] = year
+            headers = data.columns
             headers = [column for column in dir(table) if column in headers]
             for i in range(len(data)):
                 row = data.iloc[i]
@@ -55,8 +57,8 @@ def import_data(file_names, tables):
                     s.commit()
             s.commit()
     except Exception as e:
-        error = str(e)
         s.rollback()
+        error = str(year) + " " + str(e)
     finally:
         s.close()
     return error
