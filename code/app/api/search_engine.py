@@ -19,7 +19,7 @@ def create_condition(forms):
     )
 
 
-def select_token(forms):
+def exec_search(forms):
     stmt = select(Texts.text_name, Sentences.sentence_tokens,
                   TokenizedTexts.token, TokenizedTexts.token_spacy_pos, TokenizedTexts.lemma,
                   TokenizedTexts.token_start, TokenizedTexts.token_end) \
