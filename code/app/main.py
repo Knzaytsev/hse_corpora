@@ -33,8 +33,8 @@ def process_fulfillment(task_id):
     jobs[task_id].message = error
 
 
-@app.get('/fulfill_tables', status_code=HTTPStatus.ACCEPTED)
-async def work(background_tasks: BackgroundTasks):
+@app.get('/fulfill_tables', response_model=Job, status_code=HTTPStatus.ACCEPTED)
+async def make_tables_fulfillment(background_tasks: BackgroundTasks):
     new_task = Job()
     jobs[new_task.uid] = new_task
     background_tasks.add_task(process_fulfillment, new_task.uid)

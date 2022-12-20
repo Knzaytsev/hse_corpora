@@ -8,5 +8,18 @@ class Job(BaseModel):
     status: AnyStr = "in_progress"
     message: AnyStr = ""
 
+
 class SearchForm(BaseModel):
     conditions: list[dict[str, str]] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "conditions": [
+                    {
+                        "token": "have",
+                        "pos": "AUX"
+                    }
+                ]
+            }
+        }
