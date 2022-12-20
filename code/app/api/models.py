@@ -1,8 +1,12 @@
 from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
+from typing import AnyStr, Dict, List
 
 
 class Job(BaseModel):
     uid: UUID = Field(default_factory=uuid4)
-    status = "in_progress"
-    message = ""
+    status: AnyStr = "in_progress"
+    message: AnyStr = ""
+
+class SearchForm(BaseModel):
+    conditions: list[dict[str, str]] = None

@@ -1,8 +1,9 @@
 from app.db.models_creator import create_tables, fulfill_tables
 from app.db.utils import check_db_status
 from app.api.search_engine import select_token
-from app.api.models import Job
+from app.api.models import Job, SearchForm
 from http import HTTPStatus
+from typing import List
 from fastapi import FastAPI, BackgroundTasks
 
 app = FastAPI()
@@ -15,9 +16,9 @@ async def init_db():
     if error:
         raise Exception(error)
 
-@app.get("/search/{word}")
-async def select_word(word):
-    return select_token(word)
+@app.get("/search")
+async def select_word(forms: List[SearchForm]):
+    return select_token([form.dict() for form in forms])
 
 @app.get("/check_db")
 async def check_db():
