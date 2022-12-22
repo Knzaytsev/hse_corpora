@@ -22,7 +22,9 @@ def create_condition(forms):
 def exec_search(forms):
     stmt = select(Texts.text_name, Sentences.sentence_tokens,
                   TokenizedTexts.token, TokenizedTexts.token_spacy_pos, TokenizedTexts.lemma,
-                  TokenizedTexts.token_start, TokenizedTexts.token_end) \
+                  TokenizedTexts.token_start_in_sentence.label('token_start'),
+                  (TokenizedTexts.token_start_in_sentence +
+                   (TokenizedTexts.token_end - TokenizedTexts.token_start)).label('token_end')) \
         .join(Sentences, and_(Texts.text_id == Sentences.text_id,
                               Texts.text_year == Sentences.text_year)) \
         .join(TokenizedTexts,
