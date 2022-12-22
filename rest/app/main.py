@@ -5,9 +5,22 @@ from app.api.models import Job, SearchForm
 from http import HTTPStatus
 from typing import List
 from fastapi import FastAPI, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 jobs = {}
+
+origins = [
+    '*'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
@@ -16,8 +29,8 @@ async def init_db():
     if error:
         raise Exception(error)
 
-@app.get("/search")
-async def search(forms: List[SearchForm]):
+@app.post("/search")
+async def search(forms: list[SearchForm]):
     return exec_search([form.dict() for form in forms])
 
 @app.get("/check_db")
