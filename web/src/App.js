@@ -16,16 +16,17 @@ const useStyles = makeStyles({
 export default function SearchableTable() {
     const classes = useStyles();
     const [searchTerm, setSearchTerm] = useState('');
+    const [isEntered, setIsEntered] = useState(false)
     const [rows, setRows] = useState([]);
-    const [filteredRows, setFilteredRows] = useState([]);
 
     useEffect(() => {
+        if (isEntered){
         const request_data = JSON.stringify(
             [
                 {
                     "conditions": [
                         {
-                            "token": "have"
+                            "token": searchTerm
                         }
                     ]
                 }
@@ -42,18 +43,18 @@ export default function SearchableTable() {
                 // Set the rows state variable
                 setRows(data);
             });
-    }, []);
-
-    useEffect(() => {
-        // Filter the rows whenever the search term changes
-        setFilteredRows(
-            rows.filter((row) => row.token.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-    }, [searchTerm, rows]);
+        
+        setIsEntered(false)
+        }
+    }, [isEntered, searchTerm]);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
+
+    const handleSearchEnter = (event) => {
+        setIsEntered(event.key === 'Enter')
+    }
 
     return (
         <>
@@ -61,22 +62,19 @@ export default function SearchableTable() {
                 label="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
+                onKeyDown={handleSearchEnter}
             />
             <Table className={classes.root}>
                 <TableHead>
                     <TableRow>
-                        <TableCell>ID</TableCell>
                         <TableCell align="right">corpus</TableCell>
                         <TableCell align="right">token</TableCell>
                         <TableCell align="left">sentence</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {filteredRows.map((row) => (
+                    {rows.map((row) => (
                         <TableRow key={row.name}>
-                            <TableCell component="th" scope="row">
-                                {row.ID}
-                            </TableCell>
                             <TableCell align="right">{row.text_name}</TableCell>
                             <TableCell align="right">{row.token}</TableCell>
                             <TableCell align="left">{row.sentence_tokens}</TableCell>

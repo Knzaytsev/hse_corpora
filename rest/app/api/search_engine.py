@@ -12,7 +12,7 @@ column_mapper = {
 
 def create_condition(forms):
     return or_(
-        *[and_(*[column_mapper[condition].op("~")(value)
+        *[and_(*[column_mapper[condition].op("~")('^' + value + '$')
                  for conditions in form['conditions']
                  for condition, value in conditions.items()])
           for form in forms]
