@@ -8,12 +8,12 @@ services:
   api:
     container_name: python_api
     build:
-      context: ..
+      context: .
       dockerfile: ./docker/Dockerfile.rest
     ports:
       - "8080:8080"
     volumes:
-      - ../rest:/code
+      - ./rest:/code
     depends_on:
       - postgres
     networks:
@@ -23,11 +23,11 @@ services:
   web:
     container_name: web
     build:
-      context: ..
+      context: .
       dockerfile: ./docker/Dockerfile.web
     volumes:
-      - ../web:/app
-      - ../web/node_modules:/app/node_modules
+      - ./web:/app
+      - ./web/node_modules:/app/node_modules
     ports:
       - 3001:3000
     environment:
