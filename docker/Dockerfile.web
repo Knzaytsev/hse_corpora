@@ -12,7 +12,6 @@ COPY ./web/package.json ./
 COPY ./web/package-lock.json ./
 RUN npm install
 RUN npm install react-scripts@3.4.1 -g
-RUN npm install react@^18.0.0 react-dom@^18.0.0 @mui/material @emotion/react @emotion/styled
 
 # add app
 COPY ./web ./
