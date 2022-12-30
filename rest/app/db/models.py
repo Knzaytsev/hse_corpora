@@ -10,6 +10,7 @@ class Texts(Base):
 
     text_id = Column(Integer, primary_key=True)
     text_year = Column(Integer, primary_key=True)
+    task_id = Column(Integer, primary_key=True)
     text_name = Column(String)
     original_text_name = Column(String)
     text_mark = Column(String)
@@ -37,6 +38,7 @@ class Sentences(Base):
     text_id = Column(Integer, primary_key=True)
     text_year = Column(Integer, primary_key=True)
     sentence_id = Column(Integer, primary_key=True)
+    task_id = Column(Integer, primary_key=True)
     sentence_tokens = Column(String)
     sentence_poses = Column(String)
     sentence_lemmas = Column(String)
@@ -48,8 +50,8 @@ class Sentences(Base):
     sentence_token_spacy_poses = Column(String)
     sentence_token_spacy_tags = Column(String)
 
-    __table_args__ = (ForeignKeyConstraint([text_id, text_year],
-                                           [Texts.text_id, Texts.text_year]),
+    __table_args__ = (ForeignKeyConstraint([text_id, text_year, task_id],
+                                           [Texts.text_id, Texts.text_year, Texts.task_id]),
                       {})
 
 
@@ -60,6 +62,7 @@ class TokenizedTexts(Base):
     sentence_id = Column(Integer, primary_key=True)
     token_id = Column(Integer, primary_key=True)
     text_year = Column(Integer, primary_key=True)
+    task_id = Column(Integer, primary_key=True)
     token_inx = Column(Integer)
     token = Column(String)
     pos = Column(String)
@@ -74,8 +77,9 @@ class TokenizedTexts(Base):
     token_spacy_pos = Column(String)
     token_spacy_tag = Column(String)
 
-    __table_args__ = (ForeignKeyConstraint([text_id, sentence_id, text_year],
-                                           [Sentences.text_id, Sentences.sentence_id, Sentences.text_year]),
+    __table_args__ = (ForeignKeyConstraint([text_id, sentence_id, text_year, task_id],
+                                           [Sentences.text_id, Sentences.sentence_id,
+                                           Sentences.text_year, Sentences.task_id]),
                       {})
 
 
@@ -86,6 +90,7 @@ class Mistakes(Base):
     text_id = Column(Integer, primary_key=True)
     sentence_id = Column(Integer, primary_key=True)
     text_year = Column(Integer, primary_key=True)
+    task_id = Column(Integer, primary_key=True)
     ann_id = Column(String)
     mistake_type = Column(String)
     error_span = Column(String)
@@ -100,14 +105,15 @@ class Mistakes(Base):
     correction_tokens = Column(String)
     correction_poses = Column(String)
     correction_lemmas = Column(String)
-    correction_token_spaces = Column(Float)
+    correction_token_spaces = Column(String)
     ref_1 = Column(Integer)
     ref_2 = Column(Integer)
     span_start = Column(String)
     span_end = Column(String)
 
-    __table_args__ = (ForeignKeyConstraint([text_id, sentence_id, text_year],
-                                           [Sentences.text_id, Sentences.sentence_id, Sentences.text_year]),
+    __table_args__ = (ForeignKeyConstraint([text_id, sentence_id, text_year, task_id],
+                                           [Sentences.text_id, Sentences.sentence_id,
+                                           Sentences.text_year, Sentences.task_id]),
                       {})
 
 
@@ -118,6 +124,7 @@ class Corrections(Base):
     text_id = Column(Integer, primary_key=True)
     sentence_id = Column(Integer, primary_key=True)
     text_year = Column(Integer, primary_key=True)
+    task_id = Column(Integer, primary_key=True)
     correction_token_id = Column(Integer, primary_key=True)
     correction_token = Column(String)
     correction_pos = Column(String)
@@ -125,6 +132,7 @@ class Corrections(Base):
     first_token_id = Column(String)
     correction_start_inx = Column(Integer)
 
-    __table_args__ = (ForeignKeyConstraint([mistake_id, text_id, sentence_id, text_year],
-                                           [Mistakes.mistake_id, Mistakes.text_id, Mistakes.sentence_id, Mistakes.text_year]),
+    __table_args__ = (ForeignKeyConstraint([mistake_id, text_id, sentence_id, text_year, task_id],
+                                           [Mistakes.mistake_id, Mistakes.text_id,
+                                           Mistakes.sentence_id, Mistakes.text_year, Mistakes.task_id]),
                       {})

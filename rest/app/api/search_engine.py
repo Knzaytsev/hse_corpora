@@ -26,11 +26,13 @@ def exec_search(forms):
                   (TokenizedTexts.token_start_in_sentence +
                    (TokenizedTexts.token_end - TokenizedTexts.token_start)).label('token_end')) \
         .join(Sentences, and_(Texts.text_id == Sentences.text_id,
-                              Texts.text_year == Sentences.text_year)) \
+                              Texts.text_year == Sentences.text_year, 
+                              Texts.task_id == Sentences.task_id)) \
         .join(TokenizedTexts,
               and_(Sentences.text_id == TokenizedTexts.text_id,
                    Sentences.text_year == TokenizedTexts.text_year,
-                   Sentences.sentence_id == TokenizedTexts.sentence_id)) \
+                   Sentences.sentence_id == TokenizedTexts.sentence_id, 
+                   Sentences.task_id == TokenizedTexts.task_id)) \
         .where(create_condition(forms))
 
     descriptions = stmt.column_descriptions

@@ -36,7 +36,7 @@ def load_data(file_name):
 def create_table(metadata):
     metadata.create_all(engine)
 
-def import_data(file_names, tables, year):
+def import_data(file_names, tables, year, task_id):
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
@@ -46,6 +46,7 @@ def import_data(file_names, tables, year):
         for file_name, table in zip(file_names, tables):
             data = load_data(file_name)
             data['text_year'] = year
+            data['task_id'] = task_id
             headers = data.columns
             headers = [column for column in dir(table) if column in headers]
             for i in range(len(data)):
@@ -53,7 +54,7 @@ def import_data(file_names, tables, year):
                 mapped_cols = {col: None if pd.isna(row[col]) else row[col] for col in headers}
                 record = table(**mapped_cols)
                 s.add(record)
-                if i % 100 == 0:
+                if i % 1000 == 0:
                     s.commit()
             s.commit()
     except Exception as e:

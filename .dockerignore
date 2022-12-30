@@ -1,5 +1,5 @@
-../web/node_modules
-../web/build
+./web/node_modules
+./web/build
 .dockerignore
 Dockerfile.rest
 Dockerfile.web
