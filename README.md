@@ -12,9 +12,15 @@ cd /vagrant
 ## Docker deployment
 In the project folder you should run the next command:
 ```
-docker compose up --project_name="<your project name>" -d --build
+docker compose --project_name="<your project name>" up -d --build
 ```
 To down the docker you should write:
 ```
 docker compose --project_name="<your project name>" down
+```
+
+## Data load
+To load corpora, run in the "rest" folder or in the docker shell command:
+```
+dvc pull
 ```
