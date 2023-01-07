@@ -1,0 +1,7 @@
+[core]
+    no_scm = True
+    remote = hse_corpora
+['remote "hse_corpora"']
+    url = gdrive://14BAcOdxm5RUIR546dGjI_SKKmub_lQgf
+    gdrive_service_account_json_file_path = ../service_account.json
+    gdrive_use_service_account = true
