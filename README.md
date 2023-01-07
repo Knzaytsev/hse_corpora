@@ -12,11 +12,11 @@ cd /vagrant
 ## Docker deployment
 In the project folder you should run the next command:
 ```
-docker compose --project_name="<your project name>" up -d --build
+docker compose --project-name="<your project name>" up -d --build
 ```
 To down the docker you should write:
 ```
-docker compose --project_name="<your project name>" down
+docker compose --project-name="<your project name>" down
 ```
 
 ## Data load
