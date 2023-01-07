@@ -1,11 +1,12 @@
 from app.db.models import Texts, Sentences, TokenizedTexts, Mistakes, Corrections
+import os
 
-DATABASE = "postgresql"
-DB_USER = "corpora_user"
-DB_PASSWORD = "corpora_user"
-DB_HOST = "postgres_container"
-DB_PORT = 5432
-DB_NAME = "corpora_db"
+DATABASE = os.environ["DATABASE"]
+DB_USER = os.environ["DB_USER"]
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_HOST = os.environ["DB_HOST"]
+DB_PORT = os.environ["DB_PORT"]
+DB_NAME = os.environ["DB_NAME"]
 DB_CONNECTION = f"{DATABASE}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 FILES_PATH = "/code/data/Exam"
