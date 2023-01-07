@@ -112,7 +112,7 @@ export default function SearchableTable() {
                 ]);
 
             // Fetch the data from the JSON file
-            fetch('http://localhost:8080/search', {
+            fetch(process.env.REACT_APP_API_HOST + ':' + process.env.REACT_APP_API_PORT + "/search", {
                 method: 'POST',
                 headers: { "Content-type": "application/json" },
                 body: request_data

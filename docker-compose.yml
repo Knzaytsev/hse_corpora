@@ -10,6 +10,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/Dockerfile.rest
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     volumes:
@@ -29,6 +31,8 @@ services:
       - ./web:/app
       - /app/node_modules
     stdin_open: true
+    env_file:
+      - .env
     ports:
       - 3001:3000
     environment:
@@ -37,17 +41,17 @@ services:
       - api_network
 
   postgres:
-    container_name: postgres_container
+    container_name: ${DB_HOST}
     image: postgres:14.5
     environment:
-      POSTGRES_DB: "corpora_db"
-      POSTGRES_USER: "corpora_user"
-      POSTGRES_PASSWORD: "corpora_user"
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - corpora_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U corpora_user -d corpora_db"]
       interval: 10s
