@@ -18,13 +18,16 @@ def create_condition(forms):
           for form in forms]
     )
 
+def get_token_span(sentence, token_inx, token):
+    sentence = sentence.split(' ')
+    token_end = len(' '.join(sentence[:token_inx + 1]))
+    token_start = token_end - len(token)
+    return token_start, token_end
 
 def exec_search(forms):
-    stmt = select(Texts.text_name, Sentences.sentence_tokens,
-                  TokenizedTexts.token, TokenizedTexts.token_spacy_pos, TokenizedTexts.lemma,
-                  TokenizedTexts.token_start_in_sentence.label('token_start'),
-                  (TokenizedTexts.token_start_in_sentence +
-                   (TokenizedTexts.token_end - TokenizedTexts.token_start)).label('token_end')) \
+    stmt = select(Texts.text_name, TokenizedTexts.lemma, TokenizedTexts.token, 
+                  TokenizedTexts.token_inx, TokenizedTexts.token_spacy_pos, Sentences.sentence_tokens,
+                  ) \
         .join(Sentences, and_(Texts.text_id == Sentences.text_id,
                               Texts.text_year == Sentences.text_year, 
                               Texts.task_id == Sentences.task_id)) \
@@ -37,4 +40,17 @@ def exec_search(forms):
 
     descriptions = stmt.column_descriptions
     result = exec_statement(stmt)
-    return [{description["name"]: row[i] for i, description in enumerate(descriptions)} for row in result]
+
+    rows = list()
+    for row in result:
+        columns = dict()
+        for i, description in enumerate(descriptions):
+            column, value = description["name"], row[i]
+            columns[column] = value
+
+        token_start, token_end = get_token_span(columns['sentence_tokens'], columns['token_inx'], columns['token'])
+        columns['token_start'] = token_start
+        columns['token_end'] = token_end
+
+        rows.append(columns)
+    return rows
