@@ -1,16 +1,8 @@
 from app.db.models import TokenizedTexts, Sentences, Texts
 from app.db.utils import exec_statement
+from app.api.constants import column_mapper, PREFIX, POSTFIX_PATTERN, SENTENCE_TOKENS, TOKEN_INX, TOKEN, TOKEN_START, TOKEN_END
 from sqlalchemy import select, and_, or_
 from sqlalchemy.orm import aliased
-
-column_mapper = {
-    'lemma': TokenizedTexts.lemma,
-    'token': TokenizedTexts.token,
-    'dep': TokenizedTexts.token_dep,
-    'pos': TokenizedTexts.token_spacy_pos,
-}
-
-PREFIX = "tokenized_"
 
 
 # 1. Create N search fields
@@ -43,14 +35,15 @@ def join_fields(fields):
 
 
 def create_statement(forms):
-    fields = [aliased(create_search_field(form).subquery(), name=PREFIX + str(i)) for i, form in enumerate(forms)]
+    fields = [aliased(create_search_field(form).subquery(),
+                      name=PREFIX + str(i)) for i, form in enumerate(forms)]
     joined_fields = aliased(join_fields(fields).subquery(), name="fields")
     stmt = select(Texts.text_name, joined_fields, Sentences.sentence_tokens) \
-                .join(Sentences, and_(Texts.text_id == Sentences.text_id,
+        .join(Sentences, and_(Texts.text_id == Sentences.text_id,
                               Texts.text_year == Sentences.text_year,
                               Texts.task_id == Sentences.task_id)) \
-                .join(joined_fields,
-                        and_(Sentences.text_id == joined_fields.c.text_id,
+        .join(joined_fields,
+              and_(Sentences.text_id == joined_fields.c.text_id,
                    Sentences.text_year == joined_fields.c.text_year,
                    Sentences.sentence_id == joined_fields.c.sentence_id,
                    Sentences.task_id == joined_fields.c.task_id))
@@ -74,12 +67,12 @@ def exec_search(forms):
         row = dict(row)
 
         for i in range(len(forms)):
-            postfix = '_' + str(i) if i > 0 else ''
+            postfix = POSTFIX_PATTERN(i)
 
             token_start, token_end = get_token_span(
-                row['sentence_tokens'], row['token_inx' + postfix], row['token' + postfix])
-            row['token_start' + postfix] = token_start
-            row['token_end' + postfix] = token_end
+                row[SENTENCE_TOKENS], row[TOKEN_INX + postfix], row[TOKEN + postfix])
+            row[TOKEN_START + postfix] = token_start
+            row[TOKEN_END + postfix] = token_end
 
         rows.append(row)
     return rows
