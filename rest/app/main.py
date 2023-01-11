@@ -32,7 +32,9 @@ async def init_db():
 
 @app.post("/search")
 async def search(forms: list[SearchForm]):
-    return controller_exec_search([form.dict() for form in forms])
+    result = controller_exec_search([form.dict() for form in forms])
+    return result
+
 
 
 @app.get("/check_db")
