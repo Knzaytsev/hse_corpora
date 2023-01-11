@@ -10,9 +10,14 @@ from sqlalchemy.orm import aliased
 # 3. Select from joined fields
 
 def create_condition(form):
-    return and_(*[column_mapper[condition].op("~")('^' + value + '$')
-                  for conditions in form['conditions']
-                  for condition, value in conditions.items()])
+    by_search = column_mapper[form['by']].op('~')('^' + form['value'] + '$')
+    condition = [by_search]
+
+    if form['conditions']:
+        condition += [or_(*[and_(*[column_mapper[condition] == value
+                                   for condition, value in conditions.items()])
+                            for conditions in form['conditions']])]
+    return and_(*condition)
 
 
 def create_search_field(form):
