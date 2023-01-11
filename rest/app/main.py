@@ -1,6 +1,6 @@
 from app.db.models_creator import create_tables, fulfill_tables
 from app.db.utils import check_db_status
-from app.api.search_engine import exec_search
+from app.api.controllers import controller_exec_search
 from app.api.models import Job, SearchForm
 from http import HTTPStatus
 from typing import List
@@ -29,9 +29,13 @@ async def init_db():
     if error:
         raise Exception(error)
 
+
 @app.post("/search")
 async def search(forms: list[SearchForm]):
-    return exec_search([form.dict() for form in forms])
+    result = controller_exec_search([form.dict() for form in forms])
+    return result
+
+
 
 @app.get("/check_db")
 async def check_db():

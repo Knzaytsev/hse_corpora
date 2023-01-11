@@ -10,7 +10,10 @@ class Job(BaseModel):
 
 
 class SearchForm(BaseModel):
+    by: str = None
+    value: str = None
     conditions: list[dict[str, str]] = None
+
 
     class Config:
         schema_extra = {
