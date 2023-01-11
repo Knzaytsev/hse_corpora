@@ -20,7 +20,7 @@ import TextField from '@mui/material/TextField';
 import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
 
-const DEBUG = false
+const DEBUG = true
 
 const useStyles = makeStyles({
     root: {
@@ -102,32 +102,30 @@ export default function SearchableTable() {
     useEffect(() => {
         const fictiveRequest = [
             {
+                "by": "token",
+                "value": "have",
                 "conditions": [
                     {
-                        "token": "have",
                         "pos": "AUX"
+                    },
+                    {
+                        "pos": "VERB"
                     }
                 ]
             },
             {
-                "conditions": [
-                    {
-                        "token": "being"
-                    }
-                ]
+                "by": "token",
+                "value": "being"
             }
         ]
 
         const realRequest = [
             {
-                "conditions": [
-                    {
-                        "token": searchTerm
-                    }
-                ]
+                "by": "token",
+                "value": searchTerm
             }
         ]
-        
+
 
         if (isEntered) {
             setIsLoading(true);
@@ -171,7 +169,7 @@ export default function SearchableTable() {
         setPage(0);
     };
 
-    function boldTokens(row){
+    function boldTokens(row) {
         let offset = 0
         var boldRow = []
         for (let i = 0; i < row.num_fields; i++) {
@@ -181,7 +179,7 @@ export default function SearchableTable() {
             offset = row.token_end[i]
             boldRow.push(start)
             boldRow.push(span_token)
-          }
+        }
         let end = row.sentence_tokens.slice(offset, row.sentence_tokens.length)
         boldRow.push(end)
         return boldRow
