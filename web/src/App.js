@@ -20,6 +20,8 @@ import TextField from '@mui/material/TextField';
 import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
 
+const DEBUG = false
+
 const useStyles = makeStyles({
     root: {
         marginLeft: '20',
@@ -98,18 +100,39 @@ export default function SearchableTable() {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     useEffect(() => {
+        const fictiveRequest = [
+            {
+                "conditions": [
+                    {
+                        "token": "have",
+                        "pos": "AUX"
+                    }
+                ]
+            },
+            {
+                "conditions": [
+                    {
+                        "token": "being"
+                    }
+                ]
+            }
+        ]
+
+        const realRequest = [
+            {
+                "conditions": [
+                    {
+                        "token": searchTerm
+                    }
+                ]
+            }
+        ]
+        
+
         if (isEntered) {
             setIsLoading(true);
-            const request_data = JSON.stringify(
-                [
-                    {
-                        "conditions": [
-                            {
-                                "token": searchTerm
-                            }
-                        ]
-                    }
-                ]);
+            const body = DEBUG ? fictiveRequest : realRequest
+            const request_data = JSON.stringify(body);
 
             // Fetch the data from the JSON file
             fetch(process.env.REACT_APP_API_HOST + ':' + process.env.REACT_APP_API_PORT + "/search", {
@@ -148,13 +171,28 @@ export default function SearchableTable() {
         setPage(0);
     };
 
+    function boldTokens(row){
+        let offset = 0
+        var boldRow = []
+        for (let i = 0; i < row.num_fields; i++) {
+            let start = row.sentence_tokens.slice(offset, row.token_start[i])
+            let span_token = row.sentence_tokens.slice(row.token_start[i], row.token_end[i])
+            span_token = <span style={{ fontWeight: 'bold' }}>{span_token}</span>
+            offset = row.token_end[i]
+            boldRow.push(start)
+            boldRow.push(span_token)
+          }
+        let end = row.sentence_tokens.slice(offset, row.sentence_tokens.length)
+        boldRow.push(end)
+        return boldRow
+    }
+
     const renderTableContent = (
         <TableContainer>
             <Table className={classes.root}>
                 <TableHead component={Paper}>
                     <TableRow>
                         <TableCell style={{ width: 100 }} align="center">corpus</TableCell>
-                        <TableCell align="center">token</TableCell>
                         <TableCell align="left">sentence</TableCell>
                     </TableRow>
                 </TableHead>
@@ -165,8 +203,7 @@ export default function SearchableTable() {
                     ).map((row) => (
                         <TableRow key={row.name}>
                             <TableCell style={{ width: 100 }} align="center">{row.text_name}</TableCell>
-                            <TableCell align="center">{row.token}</TableCell>
-                            <TableCell align="left">{row.sentence_tokens.slice(0, row.token_start)}<span style={{ fontWeight: 'bold' }}>{row.sentence_tokens.slice(row.token_start, row.token_end)}</span>{row.sentence_tokens.slice(row.token_end, row.sentence_tokens.length)}</TableCell>
+                            <TableCell align="left">{boldTokens(row)}</TableCell>
                         </TableRow>
                     ))}
 
