@@ -26,3 +26,5 @@ class SearchForm(BaseModel):
                 ]
             }
         }
+
+# TODO: Make classes for target fields and sentences

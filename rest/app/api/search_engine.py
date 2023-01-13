@@ -9,8 +9,8 @@ from sqlalchemy.orm import aliased
 # 2. Join search fields
 # 3. Select from joined fields
 
-def create_condition(form):
-    by_search = column_mapper[form['by']].op('~')('^' + form['value'] + '$')
+def create_condition(form, pattern):
+    by_search = column_mapper[form['by']].op('~')(pattern(form['value']))
     condition = [by_search]
 
     if form['conditions']:
@@ -25,7 +25,7 @@ def create_search_field(form):
                           TokenizedTexts.token_inx, TokenizedTexts.token_spacy_pos,
                           TokenizedTexts.text_id, TokenizedTexts.text_year,
                           TokenizedTexts.sentence_id, TokenizedTexts.task_id) \
-        .where(create_condition(form))
+        .where(create_condition(form, lambda x: '^' + x + '$'))
 
     return search_field
 
