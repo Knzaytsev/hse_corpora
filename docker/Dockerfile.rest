@@ -6,7 +6,7 @@ COPY ./rest/requirements.txt /code/requirements.txt
 
 RUN \
     apt-get update \
-    && apt-get -y install libpq-dev gcc \
+    && apt-get -y install libpq-dev gcc curl \
     && pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./rest/app /code/app
