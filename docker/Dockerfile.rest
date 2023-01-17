@@ -4,6 +4,8 @@ WORKDIR /code
 
 COPY ./rest/requirements.txt /code/requirements.txt
 
+COPY ./rest/load_data.sh /usr/local/bin/load_data.sh
+
 RUN \
     apt-get update \
     && apt-get -y install libpq-dev gcc curl \
