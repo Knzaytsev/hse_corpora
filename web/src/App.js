@@ -20,7 +20,7 @@ import TextField from '@mui/material/TextField';
 import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
 
-const DEBUG = true
+const DEBUG = false
 
 const useStyles = makeStyles({
     root: {
