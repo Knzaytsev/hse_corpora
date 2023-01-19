@@ -19,6 +19,7 @@ import { makeStyles } from '@mui/styles';
 import TextField from '@mui/material/TextField';
 import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
+import Autocomplete from '@mui/material/Autocomplete';
 
 const DEBUG = false
 
@@ -27,7 +28,14 @@ const useStyles = makeStyles({
         marginLeft: '20',
         marginRight: '20',
     },
-},);
+});
+
+const pos_tags = [
+    { label: 'NOUN' },
+    { label: 'VERB' },
+    { label: 'ADJ' },
+    { label: 'ADV' },
+]
 
 function TablePaginationActions(props) {
     const theme = useTheme();
@@ -98,7 +106,6 @@ export default function SearchableTable() {
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [selectedTag, setSelectedTag] = useState(null);
     
         useEffect(() => {
             const fictiveRequest = [
@@ -158,8 +165,8 @@ export default function SearchableTable() {
             setIsEntered(event.key === 'Enter')
         };
         
-        const handleTagClick = (tag) => {
-            setSelectedTag(tag)
+        const handleFilterChange = (field, value) => {
+            setFilter({ ...filter, [field]: value });
         };
 
         const emptyRows =
@@ -173,7 +180,7 @@ export default function SearchableTable() {
             setRowsPerPage(parseInt(event.target.value, 10));
             setPage(0);
         };
-    
+        
 
         function boldTokens(row) {
             let offset = 0
@@ -189,7 +196,7 @@ export default function SearchableTable() {
             let end = row.sentence_tokens.slice(offset, row.sentence_tokens.length)
             boldRow.push(end)
             return boldRow
-        }
+        };
 
         const renderTableContent = (
             <TableContainer>
@@ -249,15 +256,21 @@ export default function SearchableTable() {
                     onChange={handleSearchChange}
                     onKeyDown={handleSearchEnter}
                 />
-                <div>
-                    <h3>Filter by Part of Speech</h3>
-                    <button className={selectedTag === 'noun' ? 'active' : ''} onClick={() => handleTagClick('noun')}>Noun</button>
-                    <button className={selectedTag === 'verb' ? 'active' : ''} onClick={() => handleTagClick('verb')}>Verb</button>
-                    <button className={selectedTag === 'adjective' ? 'active' : ''} onClick={() => handleTagClick('adjective')}>Adjective</button>
-                </div>
-
-
-
+                <Autocomplete
+                    multiple
+                    id="tags-outlined"
+                    options={pos_tags}
+                    getOptionLabel={(option) => option.label}
+                    filterSelectedOptions
+                    renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Filter by POS"
+                        placeholder="POS tags"
+                />
+                    )}
+                    sx={{ width: '200px' }}
+                />
                 <div>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
             </>
         );
