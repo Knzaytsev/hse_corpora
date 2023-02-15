@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AboutPage from './About';
 import Navigation from './navbar';
 import SearchableTable from './App';
+import MistakesSearch from './mistake-search';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -17,6 +18,7 @@ root.render(
         <Routes>
           <Route path='/' element={<SearchableTable />} />
           <Route path='/about' element={<AboutPage />} />
+          <Route path='/mistakes-search' element={<MistakesSearch />} />
           </Routes>
       </Router>
   </React.StrictMode>
