@@ -186,7 +186,9 @@ export default function SearchableTable() {
                 label="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
-                onKeyDown={handleSearchEnter} /><Autocomplete
+                onKeyDown={handleSearchEnter}
+                sx= {{ width: '200px' }}/>
+            <Autocomplete
                 multiple
                 id="tags-outlined"
                 options={pos_tags}
@@ -198,7 +200,7 @@ export default function SearchableTable() {
                         label="Filter by POS"
                         placeholder="POS tags" />
                 )}
-                sx={{ width: '200px' }} /><div>{isLoading ? <LoadingSpinner /> : renderTableContent}</div></>
+                sx={{ width: '200px' }} /><div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div></>
         
         );
     
