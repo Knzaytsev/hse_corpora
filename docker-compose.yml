@@ -6,91 +6,10 @@ volumes:
 
 services:
   api:
-    container_name: python_api
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.rest
-    env_file:
-      - ./.dev.env
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./rest:/code
-    depends_on:
-      - postgres
-    networks:
-      - postgres
-      - api_network
+    container_name: api
 
   web:
     container_name: web
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.web
-    volumes:
-      - ./web:/app
-      - /app/node_modules
-    stdin_open: true
-    env_file:
-      - ./.dev.env
-    ports:
-      - 3001:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    networks:
-      - api_network
 
   postgres:
     container_name: postgres
-    image: postgres:14.5
-    env_file:
-      - ./.prod.env
-    environment:
-      POSTGRES_DB: $${DB_NAME}
-      POSTGRES_USER: $${DB_USER}
-      POSTGRES_PASSWORD: $${DB_PASSWORD}
-      PGDATA: "/var/lib/postgresql/data/pgdata"
-    volumes:
-      - corpora_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U corpora_user -d corpora_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 4G
-    networks:
-      - postgres
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:5.7
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "corporapguser@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD: "corporapguser"
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - ./pgadmin:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
-    networks:
-      - postgres
-
-networks:
-  postgres:
-    driver: bridge
-  api_network:
-    driver: bridge
