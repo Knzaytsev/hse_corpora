@@ -9,7 +9,7 @@ services:
     container_name: api
     build:
       context: .
-      dockerfile: ./docker/Dockerfile.rest
+      dockerfile: ./docker/Dockerfile.rest.dev
     env_file:
       - ./.env.development
     ports:
@@ -26,7 +26,7 @@ services:
     container_name: web
     build:
       context: .
-      dockerfile: ./docker/Dockerfile.web
+      dockerfile: ./docker/Dockerfile.web.dev
     volumes:
       - ./web:/app
       - /app/node_modules
@@ -46,9 +46,6 @@ services:
     env_file:
       - ./.env.development
     environment:
-      POSTGRES_DB: $${DB_NAME}
-      POSTGRES_USER: $${DB_USER}
-      POSTGRES_PASSWORD: $${DB_PASSWORD}
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
       - corpora_data:/var/lib/postgresql/data
