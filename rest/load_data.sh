@@ -1,2 +1,2 @@
 dvc pull
-curl localhost:8080/fulfill_tables
+curl ${CURL_HOST}/api/fulfill_tables

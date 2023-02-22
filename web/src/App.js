@@ -133,7 +133,7 @@ export default function SearchableTable() {
             const request_data = JSON.stringify(body);
 
             // Fetch the data from the JSON file
-            fetch(process.env.REACT_APP_API_HOST + ':' + process.env.REACT_APP_API_PORT + "/search", {
+            fetch(process.env.REACT_APP_API + "/search", {
                 method: 'POST',
                 headers: { "Content-type": "application/json" },
                 body: request_data
