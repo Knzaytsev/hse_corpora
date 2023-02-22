@@ -34,10 +34,7 @@ async def init_db():
 async def search(forms: list[SearchForm]):
     result = controller_exec_search([form.dict() for form in forms])
     return result
-
-@app.get("/")
-async def hello():
-    return {'nginx': 'hello there'}
+    
 
 @app.get("/api/check_db")
 async def check_db():
