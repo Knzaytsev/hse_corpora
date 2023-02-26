@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField';
 import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
 import Autocomplete from '@mui/material/Autocomplete'; 
+import Stack from '@mui/material/Stack';
 
 
 const DEBUG = false
@@ -243,12 +244,14 @@ export default function MistakesSearch() {
 
     return (
         <>
+            <Stack spacing={2}>
             <TextField
                 label="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchEnter}
                 sx={{ width: '400px' }}/>
+            
             <Autocomplete
                 multiple
                 id="tags-outlined"
@@ -278,7 +281,8 @@ export default function MistakesSearch() {
                 
                         sx={{ width: '400px' }} />
                 )}
-            />
+                />
+                </Stack>
             <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div></>
         
     );
