@@ -14,7 +14,7 @@ import { makeStyles } from '@mui/styles';
 import TextField from '@mui/material/TextField';
 import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
-import Autocomplete from '@mui/material/Autocomplete'; 
+import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
 
 
@@ -96,195 +96,205 @@ const mist_causes = [
 
 
 export default function MistakesSearch() {
-    
+
     const classes = useStyles();
     const [searchTerm, setSearchTerm] = useState('');
-    const [isEntered, setIsEntered] = useState(false)
+    const [mistakeType, setMistakeType] = useState([])
+    const [mistakeCause, setMistakeCause] = useState([])
+    const [isEntered, setIsEntered] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    
-        useEffect(() => {
-            const fictiveRequest = [
+
+    useEffect(() => {
+        const fictiveRequest = [
+            {
+                "by": "token",
+                "value": "have",
+                "conditions": [
+                    {
+                        "pos": "AUX"
+                    },
+                    {
+                        "pos": "VERB"
+                    }
+                ]
+            },
+            {
+                "by": "token",
+                "value": "being"
+            }
+        ]
+
+
+        if (isEntered) {
+            const conditions = [
                 {
-                    "by": "token",
-                    "value": "have",
-                    "conditions": [
-                        {
-                            "pos": "AUX"
-                        },
-                        {
-                            "pos": "VERB"
-                        }
-                    ]
-                },
-                {
-                    "by": "token",
-                    "value": "being"
+                    "correction_token": [searchTerm],
+                    "mistake_type": mistakeType.map(({ label }) => label),
+                    "mistake_cause": mistakeCause.map(({ label }) => label),
                 }
             ]
 
             const realRequest = [
                 {
-                    "by": "token",
-                    "value": searchTerm
+                    "by": "mistake",
+                    "value": "",
+                    "conditions": conditions,
                 }
             ]
 
+            setIsLoading(true);
+            const body = DEBUG ? fictiveRequest : realRequest
+            const request_data = JSON.stringify(body);
 
-            if (isEntered) {
-                setIsLoading(true);
-                const body = DEBUG ? fictiveRequest : realRequest
-                const request_data = JSON.stringify(body);
+            // Fetch the data from the JSON file
+            fetch(process.env.REACT_APP_API + "/search", {
+                method: 'POST',
+                headers: { "Content-type": "application/json" },
+                body: request_data
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Set the rows state variable
+                    setRows(data);
+                    setIsLoading(false);
+                });
 
-                // Fetch the data from the JSON file
-                fetch(process.env.REACT_APP_API + "/search", {
-                    method: 'POST',
-                    headers: { "Content-type": "application/json" },
-                    body: request_data
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        // Set the rows state variable
-                        setRows(data);
-                        setIsLoading(false);
-                    });
+            setIsEntered(false)
+        }
+    }, [isEntered, searchTerm, mistakeType, mistakeCause]);
 
-                setIsEntered(false)
-            }
-        }, [isEntered, searchTerm]);
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
 
-        const handleSearchChange = (event) => {
-            setSearchTerm(event.target.value);
-        };
+    const handleSearchEnter = (event) => {
+        setIsEntered(event.key === 'Enter');
+    };
 
-        const handleSearchEnter = (event) => {
-            setIsEntered(event.key === 'Enter')
-        };
-        
+    const handleMistakeTypeChange = (event, value) => {
+        setMistakeType(value);
+    }
 
-        const emptyRows =
-            page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    const handleMistakeCauseChange = (event, value) => {
+        setMistakeCause(value);
+    }
 
-        const handleChangePage = (event, newPage) => {
-            setPage(newPage);
-        };
+    const emptyRows =
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-        const handleChangeRowsPerPage = (event) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
-        };
-        
-        function boldTokens(row) {
-            let offset = 0
-            var boldRow = []
-            for (let i = 0; i < row.num_fields; i++) {
-                let start = row.sentence_tokens.slice(offset, row.token_start[i])
-                let span_token = row.sentence_tokens.slice(row.token_start[i], row.token_end[i])
-                span_token = <span style={{ fontWeight: 'bold' }}>{span_token}</span>
-                offset = row.token_end[i]
-                boldRow.push(start)
-                boldRow.push(span_token)
-            }
-            let end = row.sentence_tokens.slice(offset, row.sentence_tokens.length)
-            boldRow.push(end)
-            return boldRow
-        };
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
 
-        const renderTableContent = (
-            <TableContainer>
-                <Table className={classes.root}>
-                    <TableHead component={Paper}>
-                        <TableRow>
-                            <TableCell style={{ width: 100 }} align="center">corpus</TableCell>
-                            <TableCell align="left">sentence</TableCell>
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
+    const renderTableContent = (
+        <TableContainer>
+            <Table className={classes.root}>
+                <TableHead component={Paper}>
+                    <TableRow>
+                        <TableCell style={{ width: 100 }} align="center">corpus</TableCell>
+                        <TableCell align="left">sentence with correction</TableCell>
+                        <TableCell align="left">mistake type</TableCell>
+                        <TableCell align="left">mistake cause</TableCell>
+                        <TableCell align="left">error</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {(rowsPerPage > 0
+                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        : rows
+                    ).map((row) => (
+                        <TableRow key={row.name}>
+                            <TableCell style={{ width: 100 }} align="center">{row.text_name}</TableCell>
+                            <TableCell align="left">{row.sentence_tokens}</TableCell>
+                            <TableCell align="left">{row.mistake_type}</TableCell>
+                            <TableCell align="left">{row.mistake_cause}</TableCell>
+                            <TableCell align="left">{row.error_span}</TableCell>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {(rowsPerPage > 0
-                            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : rows
-                        ).map((row) => (
-                            <TableRow key={row.name}>
-                                <TableCell style={{ width: 100 }} align="center">{row.text_name}</TableCell>
-                                <TableCell align="left">{boldTokens(row)}</TableCell>
-                            </TableRow>
-                        ))}
+                    ))}
 
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                colSpan={3}
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                SelectProps={{
-                                    inputProps: {
-                                        'aria-label': 'rows per page',
-                                    },
-                                    native: true,
-                                }}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
-                            />
+                    {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
                         </TableRow>
-                    </TableFooter>
-                </Table>
-            </TableContainer>
-        )
+                    )}
+                </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                            colSpan={3}
+                            count={rows.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            SelectProps={{
+                                inputProps: {
+                                    'aria-label': 'rows per page',
+                                },
+                                native: true,
+                            }}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActions}
+                        />
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        </TableContainer>
+    )
 
     return (
         <>
             <Stack spacing={2}>
-            <TextField
-                label="Search"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onKeyDown={handleSearchEnter}
-                sx={{ width: '400px' }}/>
-            
-            <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={mist_types}
-                getOptionLabel={(option) => option.label}
-                filterSelectedOptions
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Mistake Type"
-                        placeholder="Mistake Type" 
-                
-                sx={{ width: '400px' }} />
-                )}
-            />
-            <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={mist_causes}
-                getOptionLabel={(option) => option.label}
-                filterSelectedOptions
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Mistake Cause"
-                        placeholder="Mistake Cause"
-                
-                        sx={{ width: '400px' }} />
-                )}
+                <TextField
+                    label="Search"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    onKeyDown={handleSearchEnter}
+                    sx={{ width: '400px' }} />
+
+                <Autocomplete
+                    multiple
+                    id="mistake_type"
+                    options={mist_types}
+                    getOptionLabel={(option) => option.label}
+                    filterSelectedOptions
+                    onChange={handleMistakeTypeChange}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Mistake Type"
+                            placeholder="Mistake Type"
+
+                            sx={{ width: '400px' }} />
+                    )}
                 />
-                </Stack>
+                <Autocomplete
+                    multiple
+                    id="mistake_cause"
+                    options={mist_causes}
+                    getOptionLabel={(option) => option.label}
+                    filterSelectedOptions
+                    onChange={handleMistakeCauseChange}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Mistake Cause"
+                            placeholder="Mistake Cause"
+
+                            sx={{ width: '400px' }} />
+                    )}
+                />
+            </Stack>
             <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div></>
-        
+
     );
-    
+
 }

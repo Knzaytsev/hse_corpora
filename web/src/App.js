@@ -96,7 +96,7 @@ const dep_tags = [
 ]
 
 export default function SearchableTable() {
-    
+
     const classes = useStyles();
     const [searchTerm, setSearchTerm] = useState('');
     const [posTag, setPosTag] = useState([])
@@ -106,168 +106,168 @@ export default function SearchableTable() {
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    
-        useEffect(() => {
-            const fictiveRequest = [
+
+    useEffect(() => {
+        const fictiveRequest = [
+            {
+                "by": "token",
+                "value": "have",
+                "conditions": [
+                    {
+                        "pos": "AUX"
+                    },
+                    {
+                        "pos": "VERB"
+                    }
+                ]
+            },
+            {
+                "by": "token",
+                "value": "being"
+            }
+        ]
+
+        if (isEntered) {
+            const conditions = [
                 {
-                    "by": "token",
-                    "value": "have",
-                    "conditions": [
-                        {
-                            "pos": "AUX"
-                        },
-                        {
-                            "pos": "VERB"
-                        }
-                    ]
-                },
-                {
-                    "by": "token",
-                    "value": "being"
+                    "pos": posTag.map(({ label }) => label),
+                    "dep": depTag.map(({ label }) => label),
                 }
             ]
 
-            if (isEntered) {
-                const conditions = [
-                    {
-                        "pos": posTag.map(({ label }) => label),
-                        "dep": depTag.map(({ label }) => label),
-                    }
-                ]
+            const realRequest = [
+                {
+                    "by": "token",
+                    "value": searchTerm,
+                    "conditions": conditions,
+                }
+            ]
 
-                const realRequest = [
-                    {
-                        "by": "token",
-                        "value": searchTerm,
-                        "conditions": conditions,
-                    }
-                ]
+            setIsLoading(true);
+            const body = DEBUG ? fictiveRequest : realRequest
+            const requestData = JSON.stringify(body);
 
-                setIsLoading(true);
-                const body = DEBUG ? fictiveRequest : realRequest
-                const requestData = JSON.stringify(body);
+            console.log(requestData)
 
-                console.log(requestData)
+            // Fetch the data from the JSON file
+            fetch(process.env.REACT_APP_API + "/search", {
+                method: 'POST',
+                headers: { "Content-type": "application/json" },
+                body: requestData
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Set the rows state variable
+                    setRows(data);
+                    setIsLoading(false);
+                });
 
-                // Fetch the data from the JSON file
-                fetch(process.env.REACT_APP_API + "/search", {
-                    method: 'POST',
-                    headers: { "Content-type": "application/json" },
-                    body: requestData
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        // Set the rows state variable
-                        setRows(data);
-                        setIsLoading(false);
-                    });
+            setIsEntered(false)
+        }
+    }, [isEntered, searchTerm, posTag, depTag]);
 
-                setIsEntered(false)
-            }
-        }, [isEntered, searchTerm, posTag, depTag]);
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
 
-        const handleSearchChange = (event) => {
-            setSearchTerm(event.target.value);
-        };
+    const handleSearchEnter = (event) => {
+        setIsEntered(event.key === 'Enter');
+    };
 
-        const handleSearchEnter = (event) => {
-            setIsEntered(event.key === 'Enter');
-        };
-        
-        const handlePosTagChange = (event, value) => {
-            setPosTag(value);
-        };
+    const handlePosTagChange = (event, value) => {
+        setPosTag(value);
+    };
 
-        const handleDepTagChange = (event, value) => {
-            setDepTag(value);
-        };
+    const handleDepTagChange = (event, value) => {
+        setDepTag(value);
+    };
 
-        const emptyRows =
-            page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    const emptyRows =
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-        const handleChangePage = (event, newPage) => {
-            setPage(newPage);
-        };
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
 
-        const handleChangeRowsPerPage = (event) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
-        };
-        
-        function boldTokens(row) {
-            let offset = 0
-            var boldRow = []
-            for (let i = 0; i < row.num_fields; i++) {
-                let start = row.sentence_tokens.slice(offset, row.token_start[i])
-                let span_token = row.sentence_tokens.slice(row.token_start[i], row.token_end[i])
-                span_token = <span style={{ fontWeight: 'bold' }}>{span_token}</span>
-                offset = row.token_end[i]
-                boldRow.push(start)
-                boldRow.push(span_token)
-            }
-            let end = row.sentence_tokens.slice(offset, row.sentence_tokens.length)
-            boldRow.push(end)
-            return boldRow
-        };
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
-        const renderTableContent = (
-            <TableContainer>
-                <Table className={classes.root}>
-                    <TableHead component={Paper}>
-                        <TableRow>
-                            <TableCell style={{ width: 100 }} align="center">corpus</TableCell>
-                            <TableCell align="left">sentence</TableCell>
+    function boldTokens(row) {
+        let offset = 0
+        var boldRow = []
+        for (let i = 0; i < row.num_fields; i++) {
+            let start = row.sentence_tokens.slice(offset, row.token_start[i])
+            let span_token = row.sentence_tokens.slice(row.token_start[i], row.token_end[i])
+            span_token = <span style={{ fontWeight: 'bold' }}>{span_token}</span>
+            offset = row.token_end[i]
+            boldRow.push(start)
+            boldRow.push(span_token)
+        }
+        let end = row.sentence_tokens.slice(offset, row.sentence_tokens.length)
+        boldRow.push(end)
+        return boldRow
+    };
+
+    const renderTableContent = (
+        <TableContainer>
+            <Table className={classes.root}>
+                <TableHead component={Paper}>
+                    <TableRow>
+                        <TableCell style={{ width: 100 }} align="center">corpus</TableCell>
+                        <TableCell align="left">sentence</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {(rowsPerPage > 0
+                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                        : rows
+                    ).map((row) => (
+                        <TableRow key={row.name}>
+                            <TableCell style={{ width: 100 }} align="center">{row.text_name}</TableCell>
+                            <TableCell align="left">{boldTokens(row)}</TableCell>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {(rowsPerPage > 0
-                            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : rows
-                        ).map((row) => (
-                            <TableRow key={row.name}>
-                                <TableCell style={{ width: 100 }} align="center">{row.text_name}</TableCell>
-                                <TableCell align="left">{boldTokens(row)}</TableCell>
-                            </TableRow>
-                        ))}
+                    ))}
 
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 53 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                colSpan={3}
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                SelectProps={{
-                                    inputProps: {
-                                        'aria-label': 'rows per page',
-                                    },
-                                    native: true,
-                                }}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
-                            />
+                    {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
                         </TableRow>
-                    </TableFooter>
-                </Table>
-            </TableContainer>
-        )
+                    )}
+                </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                            colSpan={3}
+                            count={rows.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            SelectProps={{
+                                inputProps: {
+                                    'aria-label': 'rows per page',
+                                },
+                                native: true,
+                            }}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                            ActionsComponent={TablePaginationActions}
+                        />
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        </TableContainer>
+    )
 
     return (
-            <Stack spacing={2}>
+        <Stack spacing={2}>
             <TextField
                 label="Search"
                 value={searchTerm}
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchEnter}
-                sx= {{ width: '400px' }}/>
+                sx={{ width: '400px' }} />
             <Autocomplete
                 multiple
                 id="pos_tags"
@@ -296,9 +296,9 @@ export default function SearchableTable() {
                         placeholder="DEP tags" />
                 )}
                 sx={{ width: '400px' }} />
-                <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
-            </Stack>
-    
-        );
-    
+            <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
+        </Stack>
+
+    );
+
 }

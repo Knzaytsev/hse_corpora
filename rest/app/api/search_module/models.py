@@ -63,6 +63,7 @@ class MistakesSearch(CorpusSearch):
         Mistakes.text_id, Mistakes.text_year,
         Mistakes.sentence_id, Mistakes.task_id,
         Mistakes.error_span, Mistakes.correction,
+        Mistakes.mistake_type, Mistakes.cause,
     ]
 
     def create_search_field(self):
@@ -101,7 +102,6 @@ class SearchFactory():
             fields.append(aliased(search_class.create_search_field().subquery(),
                                   name=search_class.prefix + str(prefix_cnt[search_class.prefix])))
             prefix_cnt[search_class.prefix] += 1
-
         joined_fields = aliased(self.join_fields(
             fields).subquery(), name="fields")
 

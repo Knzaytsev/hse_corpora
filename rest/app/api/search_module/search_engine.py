@@ -15,7 +15,7 @@ def exec_search(forms):
     stmt = SearchFactory().create_statement(forms)
 
     result = exec_statement(stmt)
-
+    
     rows = list()
     for row in result:
         row = dict(row)
