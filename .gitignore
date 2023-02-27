@@ -7,5 +7,5 @@ rest/.dvc/config.local
 rest/.dvc/tmp
 rest/.dvc/cache
 rest/service_account.json
-.env
+.env*
 .vscode

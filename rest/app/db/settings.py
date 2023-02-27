@@ -2,11 +2,11 @@ from app.db.models import Texts, Sentences, TokenizedTexts, Mistakes, Correction
 import os
 
 DATABASE = os.environ["DATABASE"]
-DB_USER = os.environ["DB_USER"]
-DB_PASSWORD = os.environ["DB_PASSWORD"]
+DB_USER = os.environ["POSTGRES_USER"]
+DB_PASSWORD = os.environ["POSTGRES_PASSWORD"]
 DB_HOST = os.environ["DB_HOST"]
 DB_PORT = os.environ["DB_PORT"]
-DB_NAME = os.environ["DB_NAME"]
+DB_NAME = os.environ["POSTGRES_DB"]
 DB_CONNECTION = f"{DATABASE}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 FILES_PATH = "/code/data/Exam"
