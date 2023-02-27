@@ -18,8 +18,8 @@ class CorpusSearch():
             condition = [by_search]
 
         if self.form['conditions']:
-            condition += [or_(*[and_(*[self.column_mapper[condition] == value
-                                       for condition, value in conditions.items()])
+            condition += [or_(*[and_(*[self.column_mapper[condition].in_(value)
+                                       for condition, value in conditions.items() if value])
                                 for conditions in self.form['conditions']])]
         return and_(*condition)
 

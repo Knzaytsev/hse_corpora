@@ -33,11 +33,18 @@ const pos_tags = [
     { label: 'ADV' },
 ]
 
+const dep_tags = [
+    { label: 'det' },
+    { label: 'pobj' }
+]
+
 
 export default function SearchableTable() {
     
     const classes = useStyles();
     const [searchTerm, setSearchTerm] = useState('');
+    const [posTag, setPosTag] = useState([])
+    const [depTag, setDepTag] = useState([])
     const [isEntered, setIsEntered] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
     const [rows, setRows] = useState([]);
@@ -64,24 +71,33 @@ export default function SearchableTable() {
                 }
             ]
 
-            const realRequest = [
-                {
-                    "by": "token",
-                    "value": searchTerm
-                }
-            ]
-
-
             if (isEntered) {
+                const conditions = [
+                    {
+                        "pos": posTag.map(({ label }) => label),
+                        "dep": depTag.map(({ label }) => label),
+                    }
+                ]
+
+                const realRequest = [
+                    {
+                        "by": "token",
+                        "value": searchTerm,
+                        "conditions": conditions,
+                    }
+                ]
+
                 setIsLoading(true);
                 const body = DEBUG ? fictiveRequest : realRequest
-                const request_data = JSON.stringify(body);
+                const requestData = JSON.stringify(body);
+
+                console.log(requestData)
 
                 // Fetch the data from the JSON file
-                fetch(process.env.REACT_APP_API_HOST + ':' + process.env.REACT_APP_API_PORT + "/search", {
+                fetch(process.env.REACT_APP_API + "/search", {
                     method: 'POST',
                     headers: { "Content-type": "application/json" },
-                    body: request_data
+                    body: requestData
                 })
                     .then((response) => response.json())
                     .then((data) => {
@@ -92,16 +108,23 @@ export default function SearchableTable() {
 
                 setIsEntered(false)
             }
-        }, [isEntered, searchTerm]);
+        }, [isEntered, searchTerm, posTag, depTag]);
 
         const handleSearchChange = (event) => {
             setSearchTerm(event.target.value);
         };
 
         const handleSearchEnter = (event) => {
-            setIsEntered(event.key === 'Enter')
+            setIsEntered(event.key === 'Enter');
         };
         
+        const handlePosTagChange = (event, value) => {
+            setPosTag(value);
+        };
+
+        const handleDepTagChange = (event, value) => {
+            setDepTag(value);
+        };
 
         const emptyRows =
             page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -191,9 +214,10 @@ export default function SearchableTable() {
                 sx= {{ width: '400px' }}/>
             <Autocomplete
                 multiple
-                id="tags-outlined"
+                id="pos_tags"
                 options={pos_tags}
                 getOptionLabel={(option) => option.label}
+                onChange={handlePosTagChange}
                 filterSelectedOptions
                 renderInput={(params) => (
                     <TextField
@@ -201,7 +225,22 @@ export default function SearchableTable() {
                         label="Filter by POS"
                         placeholder="POS tags" />
                 )}
-                sx={{ width: '400px' }} /><div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
+                sx={{ width: '400px' }} />
+            <Autocomplete
+                multiple
+                id="dep_tags"
+                options={dep_tags}
+                getOptionLabel={(option) => option.label}
+                onChange={handleDepTagChange}
+                filterSelectedOptions
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Filter by DEP"
+                        placeholder="DEP tags" />
+                )}
+                sx={{ width: '400px' }} />
+                <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
             </Stack>
     
         );

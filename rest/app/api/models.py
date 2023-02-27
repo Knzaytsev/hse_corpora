@@ -12,17 +12,17 @@ class Job(BaseModel):
 class SearchForm(BaseModel):
     by: str = None
     value: str = None
-    conditions: list[dict[str, str]] = None
+    conditions: list[dict[str, list[str]]] = None
 
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "conditions": [
-                    {
-                        "token": "have",
-                        "pos": "AUX"
-                    }
-                ]
-            }
-        }
+    # class Config:
+    #     schema_extra = {
+    #         "example": {
+    #             "conditions": [
+    #                 {
+    #                     "token": "have",
+    #                     "pos": "AUX"
+    #                 }
+    #             ]
+    #         }
+    #     }
