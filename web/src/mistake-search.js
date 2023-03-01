@@ -16,6 +16,8 @@ import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 
 
 const DEBUG = false
@@ -230,7 +232,7 @@ export default function MistakesSearch() {
                     <TableRow>
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            colSpan={3}
+                            colSpan={5}
                             count={rows.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
@@ -251,7 +253,13 @@ export default function MistakesSearch() {
     )
 
     return (
-        <>
+        <Box
+        sx={{
+          pt: 4,
+          pb: 3,
+        }}
+        >
+        <Container maxWidth="xl">
             <Stack spacing={2}>
                 <TextField
                     label="Search"
@@ -271,11 +279,10 @@ export default function MistakesSearch() {
                         <TextField
                             {...params}
                             label="Mistake Type"
-                            placeholder="Mistake Type"
-
-                            sx={{ width: '400px' }} />
+                            placeholder="Mistake Type" />
                     )}
-                />
+                    sx={{ width: '400px' }} />
+                
                 <Autocomplete
                     multiple
                     id="mistake_cause"
@@ -287,14 +294,13 @@ export default function MistakesSearch() {
                         <TextField
                             {...params}
                             label="Mistake Cause"
-                            placeholder="Mistake Cause"
-
-                            sx={{ width: '400px' }} />
+                            placeholder="Mistake Cause" />
                     )}
-                />
-            </Stack>
-            <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div></>
-
+                    sx={{ width: '400px' }} />
+                <div style={{ width: '100%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
+                </Stack>
+                </Container>
+                </Box>
     );
 
 }
