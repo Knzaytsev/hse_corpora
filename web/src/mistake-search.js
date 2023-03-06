@@ -260,14 +260,25 @@ export default function MistakesSearch() {
         }}
         >
         <Container maxWidth="xl">
-            <Stack spacing={2}>
+                <Stack
+                    spacing={2}
+                    direction="row">
                 <TextField
-                    label="Search"
+                    label="Search for error"
                     value={searchTerm}
                     onChange={handleSearchChange}
                     onKeyDown={handleSearchEnter}
-                    sx={{ width: '400px' }} />
-
+                        sx={{ width: '400px' }} />
+                    
+                <TextField
+                    label="Search for correction"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    onKeyDown={handleSearchEnter}
+                        sx={{ width: '400px' }} />
+                </Stack>
+                <p></p>
+                <Stack spacing={2}>
                 <Autocomplete
                     multiple
                     id="mistake_type"
