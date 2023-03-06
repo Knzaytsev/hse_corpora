@@ -16,6 +16,9 @@ import TableHead from '@mui/material/TableHead';
 import LoadingSpinner from "./LoadingSpinner";
 import Autocomplete from '@mui/material/Autocomplete';
 import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+
 
 const DEBUG = false
 
@@ -261,6 +264,14 @@ export default function SearchableTable() {
     )
 
     return (
+
+        <Box
+        sx={{
+          pt: 4,
+          pb: 3,
+        }}
+        >
+        <Container maxWidth="xl">
         <Stack spacing={2}>
             <TextField
                 label="Search"
@@ -296,8 +307,10 @@ export default function SearchableTable() {
                         placeholder="DEP tags" />
                 )}
                 sx={{ width: '400px' }} />
-            <div style={{ width: '50%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
-        </Stack>
+            <div style={{ width: '100%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
+            </Stack>
+            </Container>
+            </Box>
 
     );
 
