@@ -16,8 +16,8 @@ root.render(
       <Router>
       <Navigation />
         <Routes>
-          <Route path='/' element={<SearchableTable />} />
-          <Route path='/about' element={<AboutPage />} />
+          <Route path='/' element={<AboutPage />} />
+          <Route path='/general-search' element={<SearchableTable />} />
           <Route path='/mistakes-search' element={<MistakesSearch />} />
           </Routes>
       </Router>
