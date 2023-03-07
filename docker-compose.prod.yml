@@ -1,0 +1,71 @@
+version: "3.9"
+
+volumes:
+  corpora_data:
+    external: false
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.rest.prod
+    env_file:
+      - ./.env.production
+    volumes:
+      - ./rest:/code
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+      - api_network
+
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.web.prod
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    stdin_open: true
+    env_file:
+      - ./.env.production
+    ports:
+      - 80:80
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - api
+    networks:
+      - api_network
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.5
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    env_file:
+      - ./.env.production
+    volumes:
+      - corpora_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U corpora_user -d corpora_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+  api_network:
+    driver: bridge
