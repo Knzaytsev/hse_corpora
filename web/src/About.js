@@ -35,7 +35,7 @@ const AboutPage = () => {
         </Typography>
 
         <Typography display="block" variant="h6" align="left" color="text.secondary" paragraph="true">
-        <Link to="/">General search</Link> allows to search for a token or a sequence of tokens. It also offers functionality of filtering search results by POS tags.
+        <Link to="/general-search">General search</Link> allows to search for a token or a sequence of tokens. It also offers functionality of filtering search results by POS tags.
         </Typography>
         
         <Typography display="block" variant="h6" align="left" color="text.secondary" paragraph="true">
