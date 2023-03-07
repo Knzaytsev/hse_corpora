@@ -100,9 +100,10 @@ const mist_causes = [
 export default function MistakesSearch() {
 
     const classes = useStyles();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [mistakeType, setMistakeType] = useState([])
-    const [mistakeCause, setMistakeCause] = useState([])
+    const [correctonTerm, setCorrectionTerm] = useState([]);
+    const [errorTerm, setErrorTerm] = useState([]);
+    const [mistakeType, setMistakeType] = useState([]);
+    const [mistakeCause, setMistakeCause] = useState([]);
     const [isEntered, setIsEntered] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [rows, setRows] = useState([]);
@@ -133,7 +134,8 @@ export default function MistakesSearch() {
         if (isEntered) {
             const conditions = [
                 {
-                    "correction_token": [searchTerm],
+                    "correction_token": correctonTerm,
+                    "error_span_token": errorTerm,
                     "mistake_type": mistakeType.map(({ label }) => label),
                     "mistake_cause": mistakeCause.map(({ label }) => label),
                 }
@@ -166,10 +168,22 @@ export default function MistakesSearch() {
 
             setIsEntered(false)
         }
-    }, [isEntered, searchTerm, mistakeType, mistakeCause]);
+    }, [isEntered, correctonTerm, errorTerm, mistakeType, mistakeCause]);
 
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
+    const handleCorrectionSearchChange = (event) => {
+        let correction = []
+        if (event.target.value){
+            correction = [event.target.value]
+        }
+        setCorrectionTerm(correction);
+    };
+
+    const handleErrorSearchChange = (event) => {
+        let err = []
+        if (event.target.value){
+            err = [event.target.value]
+        }
+        setErrorTerm(err);
     };
 
     const handleSearchEnter = (event) => {
@@ -265,15 +279,15 @@ export default function MistakesSearch() {
                     direction="row">
                 <TextField
                     label="Search for error"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
+                    value={errorTerm}
+                    onChange={handleErrorSearchChange}
                     onKeyDown={handleSearchEnter}
                         sx={{ width: '400px' }} />
                     
                 <TextField
                     label="Search for correction"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
+                    value={correctonTerm}
+                    onChange={handleCorrectionSearchChange}
                     onKeyDown={handleSearchEnter}
                         sx={{ width: '400px' }} />
                 </Stack>
