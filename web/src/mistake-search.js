@@ -220,6 +220,7 @@ export default function MistakesSearch() {
                         <TableCell align="left">mistake type</TableCell>
                         <TableCell align="left">mistake cause</TableCell>
                         <TableCell align="left">error</TableCell>
+                        <TableCell align="left">correction</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -233,6 +234,7 @@ export default function MistakesSearch() {
                             <TableCell align="left">{row.mistake_type}</TableCell>
                             <TableCell align="left">{row.mistake_cause}</TableCell>
                             <TableCell align="left">{row.error_span}</TableCell>
+                            <TableCell align="left">{row.correction}</TableCell>
                         </TableRow>
                     ))}
 
@@ -246,7 +248,7 @@ export default function MistakesSearch() {
                     <TableRow>
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            colSpan={5}
+                            colSpan={6}
                             count={rows.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
