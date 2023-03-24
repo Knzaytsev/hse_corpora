@@ -97,7 +97,8 @@ services:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
     volumes:
       - ./mydata:/label-studio/data:rw
-      # - ./deploy/nginx/certs:/certs:ro
+    networks:
+      - postgres
     command: nginx
 
   app:
@@ -107,29 +108,21 @@ services:
     expose:
       - "8000"
     depends_on:
-      - db
+      - postgres
     environment:
       - DJANGO_DB=default
-      - POSTGRE_NAME=postgres
-      - POSTGRE_USER=postgres
-      - POSTGRE_PASSWORD=
+      - POSTGRE_NAME=corpora_db
+      - POSTGRE_USER=corpora_user
+      - POSTGRE_PASSWORD=S5Uf7T)tvI+3
       - POSTGRE_PORT=5432
-      - POSTGRE_HOST=db
+      - POSTGRE_HOST=postgres
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
       - JSON_LOG=1
     volumes:
       - ./mydata:/label-studio/data:rw
+    networks:
+      - postgres
     command: label-studio-uwsgi
-
-  db:
-    image: postgres:11.5
-    hostname: db
-    restart: always
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    volumes:
-      - ${POSTGRES_DATA_DIR:-./postgres-data}:/var/lib/postgresql/data
-      # - ./deploy/pgsql/certs:/var/lib/postgresql/certs:ro
 
 networks:
   postgres:
