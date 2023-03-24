@@ -86,6 +86,51 @@ services:
     networks:
       - postgres
 
+  nginx:
+    image: heartexlabs/label-studio:latest
+    ports:
+      - "8082:8085"
+      - "8081:8086"
+    depends_on:
+      - app
+    environment:
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+    volumes:
+      - ./mydata:/label-studio/data:rw
+      # - ./deploy/nginx/certs:/certs:ro
+    command: nginx
+
+  app:
+    stdin_open: true
+    tty: true
+    image: heartexlabs/label-studio:latest
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_DB=default
+      - POSTGRE_NAME=postgres
+      - POSTGRE_USER=postgres
+      - POSTGRE_PASSWORD=
+      - POSTGRE_PORT=5432
+      - POSTGRE_HOST=db
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
+      - JSON_LOG=1
+    volumes:
+      - ./mydata:/label-studio/data:rw
+    command: label-studio-uwsgi
+
+  db:
+    image: postgres:11.5
+    hostname: db
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ${POSTGRES_DATA_DIR:-./postgres-data}:/var/lib/postgresql/data
+      # - ./deploy/pgsql/certs:/var/lib/postgresql/certs:ro
+
 networks:
   postgres:
     driver: bridge

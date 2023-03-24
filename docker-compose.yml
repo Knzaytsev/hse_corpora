@@ -13,3 +13,12 @@ services:
 
   postgres:
     container_name: postgres
+
+  nginx:
+    container_name: nginx_label_studio
+
+  app:
+    container_name: app_label_studio
+
+  db:
+    container_name: db_label_studio
