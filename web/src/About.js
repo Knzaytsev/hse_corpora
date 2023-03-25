@@ -41,11 +41,26 @@ const AboutPage = () => {
         <Typography display="block" variant="h6" align="left" color="text.secondary" paragraph="true">
         <Link to="/mistakes-search">Mistakes search</Link> returns annotated mistakes in the corpus.It is possible to pick the type and the cause of the queried mistake.
         </Typography>
-      
+          
+        <Typography
+        component="h1"
+        variant="h5"
+        align="left"
+        color="text.primary"
+        gutterBottom
+      >
+      Labeling
+        </Typography>
+
+        <Typography display="block" variant="h6" align="left" color="text.secondary" paragraph="true">    
+        Follow <Link to="//localhost:8082">this link</Link> to open the data labeling platform for the project on text coherence.
+        </Typography>
+            
         </Container>
 
         </Box>
-      </>
+    </>
+    
     )
 }
 
