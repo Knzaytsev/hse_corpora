@@ -96,9 +96,10 @@ services:
     environment:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
     volumes:
-      - ./mydata:/label-studio/data:rw
+      - ./label-studio/data:/label-studio/data:rw
     networks:
       - postgres
+      - api_network
     command: nginx
 
   app:
@@ -119,7 +120,7 @@ services:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
       - JSON_LOG=1
     volumes:
-      - ./mydata:/label-studio/data:rw
+      - ./label-studio/data:/label-studio/data:rw
     networks:
       - postgres
     command: label-studio-uwsgi
