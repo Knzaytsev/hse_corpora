@@ -110,15 +110,10 @@ services:
       - "8000"
     depends_on:
       - postgres
+    env_file:
+      - .env.development
     environment:
-      - DJANGO_DB=default
-      - POSTGRE_NAME=corpora_db
-      - POSTGRE_USER=corpora_user
-      - POSTGRE_PASSWORD=S5Uf7T)tvI+3
-      - POSTGRE_PORT=5432
-      - POSTGRE_HOST=postgres
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
-      - JSON_LOG=1
     volumes:
       - ./label-studio/data:/label-studio/data:rw
     networks:
