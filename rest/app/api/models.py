@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 from pydantic import BaseModel, Field
-from typing import AnyStr, Dict, List
+from typing import AnyStr, Dict, List, Union
 
 
 class Job(BaseModel):
@@ -12,7 +12,7 @@ class Job(BaseModel):
 class SearchForm(BaseModel):
     by: str = None
     value: str = None
-    conditions: list[dict[str, str]] = None
+    conditions: list[dict[str, list[str]]] = None
 
 
     class Config:
@@ -20,8 +20,8 @@ class SearchForm(BaseModel):
             "example": {
                 "conditions": [
                     {
-                        "token": "have",
-                        "pos": "AUX"
+                        "token": ["have"],
+                        "pos": ["AUX"]
                     }
                 ]
             }

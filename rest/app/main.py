@@ -30,14 +30,13 @@ async def init_db():
         raise Exception(error)
 
 
-@app.post("/search")
+@app.post("/api/search")
 async def search(forms: list[SearchForm]):
     result = controller_exec_search([form.dict() for form in forms])
     return result
+    
 
-
-
-@app.get("/check_db")
+@app.get("/api/check_db")
 async def check_db():
     status = dict()
     status['message'] = check_db_status()
@@ -50,7 +49,7 @@ def process_fulfillment(task_id):
     jobs[task_id].message = error
 
 
-@app.get('/fulfill_tables', response_model=Job, status_code=HTTPStatus.ACCEPTED)
+@app.get('/api/fulfill_tables', response_model=Job, status_code=HTTPStatus.ACCEPTED)
 async def make_tables_fulfillment(background_tasks: BackgroundTasks):
     new_task = Job()
     jobs[new_task.uid] = new_task
@@ -58,6 +57,6 @@ async def make_tables_fulfillment(background_tasks: BackgroundTasks):
     return new_task
 
 
-@app.get("/fulfill_tables/status")
+@app.get("/api/fulfill_tables/status")
 async def status_handler():
     return jobs
