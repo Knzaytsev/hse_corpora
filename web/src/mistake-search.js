@@ -19,6 +19,7 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
+import {ExportToExcel} from './ExportToExcel'
 
 const DEBUG = false
 
@@ -109,6 +110,7 @@ export default function MistakesSearch() {
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const fileName = "data";
 
     useEffect(() => {
         const fictiveRequest = [
@@ -275,10 +277,18 @@ export default function MistakesSearch() {
           pb: 3,
         }}
         >
-        <Container maxWidth="xl">
+            <Container maxWidth="xl">
+
+                <Stack spacing={2}>
+                <div>
+                    <ExportToExcel apiData={rows} fileName={fileName} />
+                </div>
+                </Stack>
+                <p></p>
                 <Stack
                     spacing={2}
                     direction="row">
+
                 <TextField
                     label="Search for error"
                     value={errorTerm}
