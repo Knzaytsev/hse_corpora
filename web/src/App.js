@@ -19,6 +19,7 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
+import {ExportToExcel} from './ExportToExcel'
 
 const DEBUG = false
 
@@ -109,6 +110,7 @@ export default function SearchableTable() {
     const [rows, setRows] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
+    const fileName = "data";
 
     useEffect(() => {
         const fictiveRequest = [
@@ -264,53 +266,56 @@ export default function SearchableTable() {
     )
 
     return (
-
-        <Box
-        sx={{
-          pt: 4,
-          pb: 3,
-        }}
+        <>
+            <Box
+            sx={{
+                pt: 4,
+                pb: 3,
+            }}
         >
-        <Container maxWidth="xl">
-        <Stack spacing={2}>
-            <TextField
-                label="Search"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                onKeyDown={handleSearchEnter}
-                sx={{ width: '400px' }} />
-            <Autocomplete
-                multiple
-                id="pos_tags"
-                options={pos_tags}
-                getOptionLabel={(option) => option.label}
-                onChange={handlePosTagChange}
-                filterSelectedOptions
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Filter by POS"
-                        placeholder="POS tags" />
-                )}
-                sx={{ width: '400px' }} />
-            <Autocomplete
-                multiple
-                id="dep_tags"
-                options={dep_tags}
-                getOptionLabel={(option) => option.label}
-                onChange={handleDepTagChange}
-                filterSelectedOptions
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        label="Filter by DEP"
-                        placeholder="DEP tags" />
-                )}
-                sx={{ width: '400px' }} />
-            <div style={{ width: '100%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
-            </Stack>
-            </Container>
-            </Box>
+                <Container maxWidth="xl">
+                    <Stack spacing={2}>
+                        <div>
+                            <ExportToExcel apiData={rows} fileName={fileName} />
+                        </div>
+                        <TextField
+                            label="Search"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            onKeyDown={handleSearchEnter}
+                            sx={{ width: '400px' }} />
+                        <Autocomplete
+                            multiple
+                            id="pos_tags"
+                            options={pos_tags}
+                            getOptionLabel={(option) => option.label}
+                            onChange={handlePosTagChange}
+                            filterSelectedOptions
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Filter by POS"
+                                    placeholder="POS tags" />
+                            )}
+                            sx={{ width: '400px' }} />
+                        <Autocomplete
+                            multiple
+                            id="dep_tags"
+                            options={dep_tags}
+                            getOptionLabel={(option) => option.label}
+                            onChange={handleDepTagChange}
+                            filterSelectedOptions
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Filter by DEP"
+                                    placeholder="DEP tags" />
+                            )}
+                            sx={{ width: '400px' }} />
+                        <div style={{ width: '100%' }}>{isLoading ? <LoadingSpinner /> : renderTableContent}</div>
+                    </Stack>
+                </Container>
+            </Box></>
 
     );
 
