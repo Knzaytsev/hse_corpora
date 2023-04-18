@@ -11,7 +11,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY ./web/package.json ./
 COPY ./web/package-lock.json ./
 COPY ./.env.production ./
-RUN npm ci
+RUN npm install
 
 # add app
 COPY ./web ./
